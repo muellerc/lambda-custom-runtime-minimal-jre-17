@@ -1,6 +1,7 @@
 .DS_Store
 *.iml
-runtime.zip
+/runtime.zip
+/runtime-arm.zip
 
 .idea/
 target/
