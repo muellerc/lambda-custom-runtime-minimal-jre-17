@@ -16,12 +16,19 @@ To install prerequisite software:
 ```
 
 The script does the following tasks:  
-  a) use the latest Amazon Linux 2 image and install Amazon Corretto 17
-  b) copy the software directory into the Docker container and run the build using Maven, which create an uber jar
-  c) run jdeps to calculate the Java module dependencies for this uber jar
-  d) feeding the jdeps output into jlink, creating a minimal Java 17 JRE which only contains the necessary modules to run this jar
-  e) create the runtime.zip archive, based on the AWS Lambda custom runtime specification
-  f) extracts the runtime.zip archive from the Docker image into your project root directory
+  a) use the latest Amazon Linux 2 image and install Amazon Corretto 17  
+  b) copy the software directory into the Docker container and run the build using Maven, which create an uber jar  
+  c) run jdeps to calculate the Java module dependencies for this uber jar  
+  d) feeding the jdeps output into jlink, creating a minimal Java 17 JRE which only contains the necessary modules to run this jar  
+  e) create the runtime.zip archive, based on the AWS Lambda custom runtime specification  
+  f) extracts the runtime.zip archive from the Docker image into your project root directory  
+
+
+NOTE!
+
+> The AWS Lambda Java Runtime Interface Client (RIC) is platform dependent. For this example, I assume you use an x86 machine!
+> However, to make it easier for you to go through this example, I also provide the final custom runtime archive for x86 and arm64 in the [runtimes](/runtimes) folder. Just copy them into the root directory of this project, if you cannot or don't want to build both.
+
 
 4. Provision the AWS infrastructure (mainly Amazon API Gateway, AWS Lambda and Amazon DynamoDB) using AWS CDK:
 
@@ -49,13 +56,14 @@ First, install prerequisites:
 
 ```bash
 artillery run -t $(cat target/outputs.json | jq -r '.LambdaCustomRuntimeMinimalJRE17InfrastructureStack.apiendpoint') -v '{ "url": "/custom-runtime" }' loadtest.yml
+artillery run -t $(cat target/outputs.json | jq -r '.LambdaCustomRuntimeMinimalJRE17InfrastructureStack.apiendpoint') -v '{ "url": "/custom-runtime-arm" }' loadtest.yml
 ```
 
 
 ### Check results in Amazon CloudWatch Insights
 
 1. Navigate to Amazon **[CloudWatch Logs Insights](https://console.aws.amazon.com/cloudwatch/home?#logsV2:logs-insights)**.
-2.Select the log group `/aws/lambda/lambda-custom-runtime-minimal-jre-17` from the drop-down list
+2.Select the log groups `/aws/lambda/lambda-custom-runtime-minimal-jre-17` and `/aws/lambda/lambda-custom-runtime-minimal-jre-17` from the drop-down list
 3. Copy the following query and choose **Run query**:
 
 ```

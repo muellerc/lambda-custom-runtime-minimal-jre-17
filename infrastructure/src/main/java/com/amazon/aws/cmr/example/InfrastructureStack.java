@@ -18,9 +18,7 @@ import software.amazon.awscdk.services.dynamodb.AttributeType;
 import software.amazon.awscdk.services.dynamodb.BillingMode;
 import software.amazon.awscdk.services.dynamodb.Table;
 import software.amazon.awscdk.services.dynamodb.TableProps;
-import software.amazon.awscdk.services.lambda.Code;
-import software.amazon.awscdk.services.lambda.Function;
-import software.amazon.awscdk.services.lambda.FunctionProps;
+import software.amazon.awscdk.services.lambda.*;
 import software.amazon.awscdk.services.lambda.Runtime;
 import software.amazon.awscdk.services.logs.RetentionDays;
 
@@ -49,6 +47,7 @@ public class InfrastructureStack extends Stack {
                 .description("lambda-custom-runtime-minimal-jre-17")
                 .handler("com.amazon.aws.cmr.example.ExampleDynamoDbHandler::handleRequest")
                 .runtime(Runtime.PROVIDED_AL2)
+                .architecture(Architecture.X86_64)
                 .code(Code.fromAsset("../runtime.zip"))
                 .memorySize(512)
                 .environment(mapOf("TABLE_NAME", exampleTable.getTableName()))
@@ -56,7 +55,20 @@ public class InfrastructureStack extends Stack {
                 .logRetention(RetentionDays.ONE_WEEK)
                 .build());
 
-        exampleTable.grantWriteData(exampleCustomRuntime);
+        Function exampleCustomRuntimeArm = new Function(this, "LambdaCustomRuntimeMinimalJRE17Arm", FunctionProps.builder()
+                .functionName("lambda-custom-runtime-minimal-jre-17-arm")
+                .description("lambda-custom-runtime-minimal-jre-17-arm")
+                .handler("com.amazon.aws.cmr.example.ExampleDynamoDbHandler::handleRequest")
+                .runtime(Runtime.PROVIDED_AL2)
+                .architecture(Architecture.ARM_64)
+                .code(Code.fromAsset("../runtime-arm.zip"))
+                .memorySize(512)
+                .environment(mapOf("TABLE_NAME", exampleTable.getTableName()))
+                .timeout(Duration.seconds(20))
+                .logRetention(RetentionDays.ONE_WEEK)
+                .build());
+
+        exampleTable.grantWriteData(exampleCustomRuntimeArm);
 
         HttpApi httpApi = new HttpApi(this, "ExampleApi", HttpApiProps.builder()
                 .apiName("ExampleApi")
@@ -67,6 +79,15 @@ public class InfrastructureStack extends Stack {
                 .methods(singletonList(HttpMethod.GET))
                 .integration(new LambdaProxyIntegration(LambdaProxyIntegrationProps.builder()
                         .handler(exampleCustomRuntime)
+                        .payloadFormatVersion(PayloadFormatVersion.VERSION_2_0)
+                        .build()))
+                .build());
+
+        httpApi.addRoutes(AddRoutesOptions.builder()
+                .path("/custom-runtime-arm")
+                .methods(singletonList(HttpMethod.GET))
+                .integration(new LambdaProxyIntegration(LambdaProxyIntegrationProps.builder()
+                        .handler(exampleCustomRuntimeArm)
                         .payloadFormatVersion(PayloadFormatVersion.VERSION_2_0)
                         .build()))
                 .build());
