@@ -42,20 +42,22 @@ public class InfrastructureStack extends Stack {
                 .billingMode(BillingMode.PAY_PER_REQUEST)
                 .build());
 
-        Function exampleCustomRuntime = new Function(this, "LambdaCustomRuntimeMinimalJRE17", FunctionProps.builder()
-                .functionName("lambda-custom-runtime-minimal-jre-17")
-                .description("lambda-custom-runtime-minimal-jre-17")
+        Function exampleCustomRuntimeX86 = new Function(this, "LambdaCustomRuntimeMinimalJRE17-x86", FunctionProps.builder()
+                .functionName("lambda-custom-runtime-minimal-jre-17-x86")
+                .description("lambda-custom-runtime-minimal-jre-17-x86")
                 .handler("com.amazon.aws.cmr.example.ExampleDynamoDbHandler::handleRequest")
                 .runtime(Runtime.PROVIDED_AL2)
                 .architecture(Architecture.X86_64)
-                .code(Code.fromAsset("../runtime.zip"))
+                .code(Code.fromAsset("../runtime-x86.zip"))
                 .memorySize(512)
                 .environment(mapOf("TABLE_NAME", exampleTable.getTableName()))
                 .timeout(Duration.seconds(20))
                 .logRetention(RetentionDays.ONE_WEEK)
                 .build());
 
-        Function exampleCustomRuntimeArm = new Function(this, "LambdaCustomRuntimeMinimalJRE17Arm", FunctionProps.builder()
+        exampleTable.grantWriteData(exampleCustomRuntimeX86);
+
+        Function exampleCustomRuntimeArm = new Function(this, "LambdaCustomRuntimeMinimalJRE17-arm", FunctionProps.builder()
                 .functionName("lambda-custom-runtime-minimal-jre-17-arm")
                 .description("lambda-custom-runtime-minimal-jre-17-arm")
                 .handler("com.amazon.aws.cmr.example.ExampleDynamoDbHandler::handleRequest")
@@ -75,10 +77,10 @@ public class InfrastructureStack extends Stack {
                 .build());
 
         httpApi.addRoutes(AddRoutesOptions.builder()
-                .path("/custom-runtime")
+                .path("/custom-runtime-x86")
                 .methods(singletonList(HttpMethod.GET))
                 .integration(new LambdaProxyIntegration(LambdaProxyIntegrationProps.builder()
-                        .handler(exampleCustomRuntime)
+                        .handler(exampleCustomRuntimeX86)
                         .payloadFormatVersion(PayloadFormatVersion.VERSION_2_0)
                         .build()))
                 .build());

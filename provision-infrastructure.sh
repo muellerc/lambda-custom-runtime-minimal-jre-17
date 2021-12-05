@@ -15,7 +15,8 @@ cdk deploy --outputs-file target/outputs.json
 
 # test the Amazon API Gateway endpoint
 # we should see an HTTP 200 status code
-curl -i $(cat target/outputs.json | jq -r '.LambdaCustomRuntimeMinimalJRE17InfrastructureStack.apiendpoint')/custom-runtime
+curl -i $(cat target/outputs.json | jq -r '.LambdaCustomRuntimeMinimalJRE17InfrastructureStack.apiendpoint')/custom-runtime-x86
+curl -i $(cat target/outputs.json | jq -r '.LambdaCustomRuntimeMinimalJRE17InfrastructureStack.apiendpoint')/custom-runtime-arm
 
 # navigate back into the projects root directory
 cd $(pwd)

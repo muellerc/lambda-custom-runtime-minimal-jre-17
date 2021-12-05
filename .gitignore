@@ -1,8 +1,9 @@
 .DS_Store
 *.iml
-/runtime.zip
+/runtime-x86.zip
 /runtime-arm.zip
 
+aws-lambda-java-libs/
 .idea/
 target/
 cdk.out/
