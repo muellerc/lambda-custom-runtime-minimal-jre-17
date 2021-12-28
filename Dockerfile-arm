@@ -10,7 +10,7 @@ RUN yum -y update \
 
 WORKDIR /
 
-# Because the aws-lambda-java-runtime-interface-client.jat is platform dependent and build for x86,
+# Because the aws-lambda-java-runtime-interface-client-2.0.0.jar is platform dependent and build for x86,
 # we cannot use the one from Maven Central. Therefore, we build it for ARM in the step before. Now,
 # we have to install this version in our local Maven repo, so that we use this version in our custom
 # runtime.
