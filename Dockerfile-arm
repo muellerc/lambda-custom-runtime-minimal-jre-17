@@ -6,7 +6,7 @@ RUN curl -L -o /etc/yum.repos.d/corretto.repo https://yum.corretto.aws/corretto.
 
 # Update the packages and install Amazon Corretto 17, Maven and Zip
 RUN yum -y update \
-    && yum install -y java-17-amazon-corretto-devel maven zip
+    && yum install -y java-17-amazon-corretto-jmods maven zip
 
 WORKDIR /
 

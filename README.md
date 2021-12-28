@@ -3,13 +3,14 @@ An AWS Lambda custom runtime to enable Java 17 support on a minimalistic JRE, wh
 
 ## Getting started
 
-Download or clone the repository.
+1. Download or clone the repository.  
 
-To install prerequisite software:
+2. install prerequisite software:  
 
-1. Install [AWS CDK](https://docs.aws.amazon.com/cdk/latest/guide/getting_started.html)
-2. Install [Docker](https://docs.docker.com/get-docker/)
-3. Build the `aws-lambda-java-runtime-interface-client-2.0.0.jar` for ARM, because the official [aws-lambda-java-runtime-interface-client-2.0.0.jar](https://search.maven.org/artifact/com.amazonaws/aws-lambda-java-runtime-interface-client/2.0.0/jar) is platform dependent and built for x86 and we want to deploy to x86 and ARM.
+  a) Install [AWS CDK](https://docs.aws.amazon.com/cdk/latest/guide/getting_started.html)  
+  b) Install [Docker](https://docs.docker.com/get-docker/)  
+
+3. Build the `aws-lambda-java-runtime-interface-client-2.0.0.jar` for ARM, because the official [aws-lambda-java-runtime-interface-client-2.0.0.jar](https://search.maven.org/artifact/com.amazonaws/aws-lambda-java-runtime-interface-client/2.0.0/jar) is platform dependent (built for x86) and we want to deploy to x86 and ARM.
 
 NOTE!
 
@@ -40,7 +41,7 @@ NOTE!
 > To make it easier for you to go through this example, I also provide the final custom runtime archive for x86 and ARM in the [runtimes](/runtimes) folder. Just copy them into the root directory of this project, if you cannot or don't want to build both.
 
 
-4. Provision the AWS infrastructure (mainly Amazon API Gateway, AWS Lambda and Amazon DynamoDB) using AWS CDK:
+5. Provision the AWS infrastructure (mainly Amazon API Gateway, AWS Lambda and Amazon DynamoDB) using AWS CDK:
 
 ```bash
 ./provision-infrastructure.sh

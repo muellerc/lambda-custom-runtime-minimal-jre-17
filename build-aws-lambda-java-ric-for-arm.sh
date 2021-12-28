@@ -2,6 +2,9 @@
 
 set -euo pipefail
 
+# remove a potential earlier cloned aws-lambda-java-libs repository
+rm -rf aws-lambda-java-libs
+
 git clone https://github.com/aws/aws-lambda-java-libs.git
 cd aws-lambda-java-libs
 
